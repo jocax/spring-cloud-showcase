@@ -1,0 +1,11 @@
+server:
+  port: 8761
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8762/eureka/
+  server:
+    waitTimeInMsWhenSyncEmpty: 0

@@ -1,0 +1,20 @@
+server:
+  port: 7071
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      
+  instance:
+    metadataMap:
+      instanceId: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+
+security:
+  ignored: true
+  basic:
+    enabled: false
+  user:
+    name: admin
+    password: admin

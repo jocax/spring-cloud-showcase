@@ -1,0 +1,45 @@
+server:
+  port: 7080
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      
+  instance:
+    metadataMap:
+      instanceId: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+
+management:
+  security:
+    enabled: false
+
+security:
+  ignored: true
+  basic:
+    enabled: false
+  user:
+    name: config
+    password: config
+
+spring:
+  cloud:
+    config:
+      enabled: false
+      server:
+        uri: ${CONFIG_SERVICE_DIR:file:/Users/ms/development/projects/internal/spring-cloud-showcase/config}
+
+  boot:
+    admin:
+      url: http://localhost:7070/
+
+endpoints:
+  jmx:
+    domain: showcase
+    uniqueNames: true
+    enabled: true
+
+http:
+  mappers:
+    json-pretty-print: true

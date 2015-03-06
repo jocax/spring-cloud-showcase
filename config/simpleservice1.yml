@@ -1,0 +1,10 @@
+---
+spring:
+  profiles: dev
+simpleservice:
+  message: Development mode
+---
+spring:
+  profiles: prod
+simpleservice:
+  message: Production mode
