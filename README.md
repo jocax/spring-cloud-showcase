@@ -14,7 +14,9 @@ The start of the different services will take some time. Watch the console outpu
 After start is completed you can inspect services in the [admin UI](http://localhost:7070/#/overview).
 
 Access [simple service with client](http://localhost:8081/rt) using rest template.
+
 Access [simple service with client](http://localhost:8081/feign) using feign.
+
 Access [simple service with client](http://localhost:8081/zuulsimpleservice) using zuul.
 
 Repeat the link URL invocation and you should see that the called service instance changes.
