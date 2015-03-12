@@ -7,6 +7,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +15,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/service/image")
@@ -40,17 +42,13 @@ public class ImageRest {
         return byteArrayOutputStream.toByteArray();
     }
 
-
-    @RequestMapping(value = "/{id}",   method = RequestMethod.GET,
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/{id}",   method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ImageQueryResponse getFullImage(@PathVariable("id") final String id) {
         LOG.info("Get image with ID: {}", id);
         ImageQueryResponse imageQueryResponse = images.get(getRandomKey());
-        if (imageQueryResponse == null) {
-           return images.get("1");
-        }
+        imageQueryResponse.setId(UUID.randomUUID().toString());
         return imageQueryResponse;
     }
 
@@ -60,10 +58,20 @@ public class ImageRest {
     public byte[] getDataImage(@PathVariable("id") final String id) {
         LOG.info("Get image with ID: {}", id);
         ImageQueryResponse imageQueryResponse = images.get(getRandomKey());
-        if (imageQueryResponse == null) {
-            return images.get("1").getContent();
-        }
+        imageQueryResponse.setId(UUID.randomUUID().toString());
         return imageQueryResponse.getContent();
+    }
+
+
+    /**
+     * Required for AJAX calls from angularjs: callback=JSON_CALLBACK
+     * https://spring.io/blog/2014/07/28/spring-framework-4-1-spring-mvc-improvements
+     */
+    @ControllerAdvice
+    private static class JsonpAdvice extends AbstractJsonpResponseBodyAdvice {
+        public JsonpAdvice() {
+            super("callback");
+        }
     }
 
 
@@ -74,14 +82,23 @@ public class ImageRest {
     }
 
     public static class ImageQueryResponse {
-        private final String name;
-        private final String contentType;
-        private final byte[] content;
+        private String id;
+        private String name;
+        private String contentType;
+        private byte[] content;
 
         public ImageQueryResponse(String name, String contentType, byte[] content) {
             this.name = name;
             this.contentType = contentType;
             this.content = content;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
         }
 
         public String getName() {

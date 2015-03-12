@@ -25,7 +25,8 @@ public class HeaderDebugFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         if (doLog(request)) {
-            LOG.info("Before request header(s): {}", getRequestHeaders(request));
+            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+            LOG.info("Before request. Method: {}, Path: {}, header(s): {}", httpServletRequest.getMethod(), httpServletRequest.getRequestURI() + httpServletRequest.getQueryString() , getRequestHeaders(request));
         }
 
         chain.doFilter(request, response);
