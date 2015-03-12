@@ -1,5 +1,4 @@
-
-imageApp.controller('DemoController', function($scope) {
+imageApp.controller('ImageController', function($scope) {
     $scope.images = [1, 2, 3, 4];
 
     $scope.loadMore = function() {

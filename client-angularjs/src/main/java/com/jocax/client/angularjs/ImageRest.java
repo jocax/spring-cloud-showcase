@@ -1,6 +1,8 @@
 package com.jocax.client.angularjs;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,11 +13,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/service/image")
 public class ImageRest {
-
+    private static final Logger LOG = LoggerFactory.getLogger(ImageRest.class);
     private static final Map<String, ImageQueryResponse> images = new HashMap<String, ImageQueryResponse>();
 
     @PostConstruct
@@ -42,12 +45,32 @@ public class ImageRest {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public byte[] getImage(@PathVariable("id") final String id) {
-        ImageQueryResponse imageQueryResponse = images.get(id);
+    public ImageQueryResponse getFullImage(@PathVariable("id") final String id) {
+        LOG.info("Get image with ID: {}", id);
+        ImageQueryResponse imageQueryResponse = images.get(getRandomKey());
         if (imageQueryResponse == null) {
-            throw new RuntimeException("");
+           return images.get("1");
+        }
+        return imageQueryResponse;
+    }
+
+    @RequestMapping(value = "/data/{id}",   method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public byte[] getDataImage(@PathVariable("id") final String id) {
+        LOG.info("Get image with ID: {}", id);
+        ImageQueryResponse imageQueryResponse = images.get(getRandomKey());
+        if (imageQueryResponse == null) {
+            return images.get("1").getContent();
         }
         return imageQueryResponse.getContent();
+    }
+
+
+    private String getRandomKey() {
+        Random random = new Random();
+        int randomNumber = random.nextInt(images.size()) + 1;
+        return "" + randomNumber;
     }
 
     public static class ImageQueryResponse {
