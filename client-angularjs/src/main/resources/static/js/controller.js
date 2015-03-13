@@ -1,37 +1,25 @@
-imageApp.controller('ImageController', function ($scope) {
-    $scope.images = [1, 2, 3, 4];
+imageApp.factory('ImageLoader', function ($http, $resource) {
 
-    $scope.loadMore = function () {
-        var last = $scope.images[$scope.images.length - 1];
-        for (var i = 1; i <= 4; i++) {
-            $scope.images.push(last + i);
-        }
-    };
-});
+    $http.defaults.headers.common['XYZ-TOKEN']= 'myToken';
 
-
-
-imageApp.factory('ImageLoaderWithHeader', function ($http) {
-
-    var ImageLoaderWithHeader = function () {
+    var ImageLoader = function () {
         this.items = [];
         this.busy = false;
         this.id = '0';
     };
 
-    //http://tutorials.jenkov.com/angularjs/ajax.html
-
-    ImageLoaderWithHeader.prototype.nextPage = function ($http) {
-        if (this.busy) return;
+    ImageLoader.prototype.loadMoreWithJsonp = function () {
+        if (this.busy) {
+            return;
+        }
         this.busy = true;
 
         var url = "http://localhost:8082/service/image/" + this.id + "/?callback=JSON_CALLBACK";
 
-        $http.jsonp(url).
-            success(function (data) {
+        $http.jsonp(url).success(function (data) {
                 //alert('Success: ' + data);
                 var items = [data];
-                for (var i = 0; i <= items.length; i++) {
+                for (var i = 0; i <= 10; i++) {
                     this.items.push(data);
                 }
                 this.id = this.items[this.items.length - 1].id;
@@ -42,27 +30,31 @@ imageApp.factory('ImageLoaderWithHeader', function ($http) {
     };
 
 
-    ImageLoaderWithHeader.prototype.nextPage2 = function ($jquery) {
-        if (this.busy) return;
+    ImageLoader.prototype.loadMoreWithHTTP = function () {
+        if (this.busy) {
+            return;
+        }
         this.busy = true;
 
-        var url = "http://localhost:8082/service/image/" + this.id + "/?callback=JSON_CALLBACK";
+        var Image = $resource("http://localhost:8082/service/image/:imageId",
+            {imageId: '@id'}, { image: {
+                    method: 'GET',
+                    isArray: false
+            }});
 
-        $http.jsonp(url).
-            success(function (data) {
-                //alert('Success: ' + data);
-                var items = [data];
-                for (var i = 0; i <= items.length; i++) {
-                    this.items.push(data);
+        Image.get({imageId: this.id})
+            .$promise.then(function(image) {
+                var items = [image];
+                for (var i = 0; i <= 10; i++) {
+                    this.items.push(image);
                 }
                 this.id = this.items[this.items.length - 1].id;
                 this.busy = false;
-            }.bind(this)).error(function (data) {
-                alert('Error: ' + data);
-            });
+            }.bind(this));
     };
 
-
-    return ImageLoaderWithHeader;
+    return ImageLoader;
 })
 ;
+
+

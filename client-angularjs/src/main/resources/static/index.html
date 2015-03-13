@@ -4,28 +4,21 @@
     <title>Image</title>
 </head>
 <body>
-<h1>Load images with special HTTP Header</h1>
+<h1>AngularJS: Load images while you scroll down </h1>
 
 <div id="page">
-
-   <a href="http://binarymuse.github.io/ngInfiniteScroll/demos.html">Examples</a>
-    <br>
-    <a href="http://tutorials.jenkov.com/angularjs/ajax.html">Ajax amd jsonp</a>
-
-    <div ng-app='imageApp' ng-controller='ImageController'>
-        <div infinite-scroll='loadMore()' infinite-scroll-distance='2'>
-            <img ng-repeat='image in images' ng-src='http://localhost:8082/service/image/data/{{image}}'>
-        </div>
-    </div>
-
+    <h4>Useful links:</h4>
+    <a href="http://binarymuse.github.io/ngInfiniteScroll/demos.html">InfiniteScroll</a>
+    <br />
+    <a href="http://tutorials.jenkov.com/angularjs/ajax.html">Tutorial about ajax amd jsonp</a>
+    <br />
+    <a href="http://www.bennadel.com/blog/2610-using-jsonp-with-resource-in-angularjs.htm">Another jsonp example</a>
+    <br />
+    <h4>Demo link:</h4>
+    <a href="demoJSONP.html">Demo JSONP</a>
+    <br />
+    <a href="demoHTTP.html">Demo HTTP with customer header XYZ-TOKEN</a>
 
 </div>
-<script type='text/javascript' src='js/lib/jquery-2.1.1.min.js'></script>
-<script type="text/javascript" src="js/lib/angular.js"></script>
-<script type="text/javascript" src="js/lib/ng-infinite-scroll.js"></script>
-<script type="text/javascript" src="js/app.js"></script>
-<script type="text/javascript" src="js/controller.js"></script>
-
-
 </body>
 </html>

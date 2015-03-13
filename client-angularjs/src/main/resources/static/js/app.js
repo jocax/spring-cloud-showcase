@@ -1,11 +1,7 @@
 'use strict';
 
-var imageApp = angular.module('imageApp', ['infinite-scroll']);
+var imageApp = angular.module('imageApp', ['infinite-scroll', 'ngResource']);
 
-imageApp.controller('ImageController', function($scope, ImageLoader) {
+imageApp.controller('ImageLoaderController', function($scope, ImageLoader) {
     $scope.imageLoader = new ImageLoader();
-});
-
-imageApp.controller('ImageLoaderWithHeaderController', function($scope, ImageLoaderWithHeader) {
-    $scope.imageLoaderWithHeader = new ImageLoaderWithHeader();
 });

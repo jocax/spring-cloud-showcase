@@ -74,7 +74,6 @@ public class ImageRest {
         }
     }
 
-
     private String getRandomKey() {
         Random random = new Random();
         int randomNumber = random.nextInt(images.size()) + 1;
