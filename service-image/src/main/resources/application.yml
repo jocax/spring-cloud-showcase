@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  http:
+    gzip:
+      deflateCompressionLevel: 9
+      mimeTypes: text/plain,image/jpeg
+      methods: GET
+      minGzipSize: 1
