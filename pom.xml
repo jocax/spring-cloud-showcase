@@ -14,6 +14,7 @@
     <modules>
         <module>client-angularjs</module>
         <module>service-image</module>
+        <module>service-aws</module>
         <module>client1</module>
         <module>client2</module>
         <module>admin1</module>

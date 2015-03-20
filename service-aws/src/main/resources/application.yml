@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  http:
+    gzip:
+      deflateCompressionLevel: 9
+      mimeTypes: text/plain,image/jpeg
+      methods: GET
+      minGzipSize: 1
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${CLOUD_AWS_ACCESS_KEY:myAccessKey}
+      secretKey: ${CLOUD_AWS_SECRET_KEY:mySecretKey}
+      instanceProfile: true
+    region:
+      auto: false
+      static: eu-central-1

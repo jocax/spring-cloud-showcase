@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+        >
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.jocax.spring.cloud.showcase</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <packaging>war</packaging>
+
+    <artifactId>service-aws</artifactId>
+
+    <properties>
+        <start-class>com.jocax.service.aws.Application</start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <beanstalker.versionLabel>${maven.build.timestamp}</beanstalker.versionLabel>
+
+        <!-- AWS -->
+
+        <!-- http://docs.ingenieux.com.br/project/beanstalker/ref-beanstalk-properties.html -->
+        <beanstalker.serverId>aws.elasticbeanstalk.com</beanstalker.serverId>
+        <beanstalker.region>eu-central-1</beanstalker.region>
+        <beanstalker.verbose>true</beanstalker.verbose>
+
+        <beanstalk.environmentRef>Default-Environment-ivqtyzhxs3.elasticbeanstalk.com</beanstalk.environmentRef>
+        <beanstalk.environmentName>Default-Environment</beanstalk.environmentName>
+
+        <beanstalk.applicationName>service-aws</beanstalk.applicationName>
+        <beanstalk.useStagingDirectory>true</beanstalk.useStagingDirectory>
+
+        <beanstalk.cnamePrefix>Default-Environment-ivqtyzhxs3</beanstalk.cnamePrefix>
+
+        <!--beanstalker.serverId the Server Id to Use (see AWS Configuration)-->
+        <!--beanstalker.verbose: Set to true for Verbose Logging (AWS SDK + Internal Messages)-->
+        <!--beanstalker.region-->
+
+        <beanstalk.solutionStack>Tomcat 8 Java 8 on 64bit Amazon Linux 2014.09 v1.2.0</beanstalk.solutionStack>
+
+        <beanstalk.environmentType>SingleInstance</beanstalk.environmentType>
+
+
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>br.com.ingenieux</groupId>
+                <artifactId>beanstalk-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>expose-security-credentials</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>expose-security-credentials</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <!--<extensions>-->
+        <!--<extension>-->
+        <!--<groupId>org.springframework.build</groupId>-->
+        <!--<artifactId>aws-maven</artifactId>-->
+        <!--<version>5.0.0.RELEASE</version>-->
+        <!--</extension>-->
+        <!--</extensions>-->
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-aws-autoconfigure</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <maven.install.skip>true</maven.install.skip>
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+            <build>
+                <defaultGoal>deploy</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>beanstalk-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>fast-deploy</goal>
+                                    <goal>replace-environment</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <skipEnvironmentUpdate>true</skipEnvironmentUpdate>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>fast-deploy</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <maven.install.skip>true</maven.install.skip>
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+            <build>
+                <defaultGoal>deploy</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-war</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exploded</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>beanstalk-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>fast-deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>worker</id>
+            <properties>
+                <beanstalk.environmentRef>aws-app-worker</beanstalk.environmentRef>
+                <beanstalk.environmentName>aws-app-worker</beanstalk.environmentName>
+                <beanstalk.environmentTierName>Worker</beanstalk.environmentTierName>
+                <beanstalk.sqsdHttpPath>/services/api/v1/sqsd</beanstalk.sqsdHttpPath>
+            </properties>
+        </profile>
+        <profile>
+            <id>s3-deploy</id>
+            <properties>
+                <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+                <beanstalk.versionLabel>${maven.build.timestamp}</beanstalk.versionLabel>
+                <maven.test.skip>true</maven.test.skip>
+                <maven.install.skip>true</maven.install.skip>
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>beanstalk-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>upload-source-bundle</goal>
+                                    <goal>create-application-version</goal>
+                                    <!-- replace to replace-environment or blue-green
+                                         if you want zero downtime or blue-green -->
+                                    <goal>put-environment</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>bluegreen-s3-deploy</id>
+            <properties>
+                <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+                <beanstalk.versionLabel>${maven.build.timestamp}</beanstalk.versionLabel>
+                <maven.test.skip>true</maven.test.skip>
+                <maven.install.skip>true</maven.install.skip>
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>beanstalk-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>upload-source-bundle</goal>
+                                    <goal>create-application-version</goal>
+                                    <!-- replace to replace-environment or blue-green
+                                         if you want zero downtime or blue-green -->
+                                    <goal>blue-green</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
+</project>
