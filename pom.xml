@@ -12,7 +12,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>client-angularjs</module>
         <module>service-image</module>
         <module>service-aws</module>
         <module>client1</module>
